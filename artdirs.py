@@ -42,7 +42,5 @@ class ABase(SiteScraper):
 e = Ezine()
 e.fetchArticle('cats')
 
-print "This is a sample to check whetehe gist workd"
 print e.article
 
-print "aksjdflk"
