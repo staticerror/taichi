@@ -1,6 +1,7 @@
 import urllib
 import urllib2
 from xml.dom import minidom
+from base.htmlutils import encodeToAscii
 
 def parseQuestion(ques):            
     ques_ = {}
@@ -95,7 +96,13 @@ class Answers:
 if __name__ == '__main__':
     app = Answers()
     app.appid = "e0U05XjV34HKgxTrrFSZORdBbZPvFdBNR1gx1rd9vsnGc1ph2LjV3kQlUpObW8cSBPc-"
-    print app.questionSearch({'query':'cats', 'search_in':'best_answer'})
+    result = app.questionSearch({'query':'cats', 'search_in':'best_answer', 'results' : '50' })
+    for res in result:
+        print res['Subject'].encode('utf8') + res['Content'].encode('utf8') + res['ChosenAnswer'].encode('utf8')
+        print "\n"
+      #  print res['Content']
+      #  print "\n\n"
+        
     #print len(app.getByCategory({'category_id':'396546304'}))
     #print app.getByUser({'user_id':'HPsA6va4aa'})
     #20070331070321AAlyopp
