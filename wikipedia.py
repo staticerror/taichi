@@ -16,5 +16,5 @@ class Wikipedia(SiteScraper):
 
 
 a = Wikipedia()
-a.fetchArticle("Pink")
+a.fetchArticle("Pink_floyd")
 print a.article

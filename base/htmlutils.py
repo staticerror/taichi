@@ -37,6 +37,7 @@ def parse(text, *atrs):
 
 def parseAll(text, *atrs):
 	"Returns all the results of parsing atrs using BeautifulSoup"
+	text = text.encode('utf-8')
 	soup= BeautifulSoup(text)
 	body = soup.findAll(*atrs)
 	return body
