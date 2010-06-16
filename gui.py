@@ -41,7 +41,7 @@ class MainWindow(wx.Frame):
         vbox.Add(editortoolbar, 0, wx.EXPAND) # editor, below menubar
         
 
-        vbox.Add(verticaltoolbar, 10, wx.EXPAND | wx.RIGHT| wx.TOP| wx.BOTTOM, 20) 
+        vbox.Add(verticaltoolbar, 1, wx.EXPAND | wx.RIGHT| wx.TOP | wx.BOTTOM, 20) 
 
 
         self.Bind(wx.EVT_TOOL, self.OnExit, id=wx.ID_EXIT)
@@ -56,15 +56,22 @@ class MainWindow(wx.Frame):
         MainContainer = wx.BoxSizer(wx.HORIZONTAL)
 
         verticaltoolbar = wx.ToolBar(self, -1, style = wx.TB_VERTICAL )
+
+        verticaltoolbar.AddSeparator()
         verticaltoolbar.AddLabelTool(-1, "Research", wx.Bitmap('/home/desktop/Desktop/crystal_project/64x64/apps/search.png'))
+        verticaltoolbar.AddSeparator()
         verticaltoolbar.AddLabelTool(-1, "Edit", wx.Bitmap('/home/desktop/Desktop/crystal_project/64x64/apps/package_editorspackage_editors.png'))
+        verticaltoolbar.AddSeparator()
         verticaltoolbar.AddLabelTool(-1, "Saved Articles", wx.Bitmap('/home/desktop/Desktop/crystal_project/64x64/filesystems/folder_red.png'))
+        verticaltoolbar.AddSeparator()
         verticaltoolbar.Realize()
 
-        MainContainer.Add(verticaltoolbar)
+
+        MainContainer.Add(verticaltoolbar, 0, wx.TOP | wx.LEFT , border =20)
+        MainContainer.Add((30, -1))
         
         notebook = self.ResearchNoteBook()
-        MainContainer.Add(notebook, 5,  wx.EXPAND | wx.ALL, 20)
+        MainContainer.Add(notebook, 7,  wx.EXPAND | wx.ALL, 10)
         
 
         return MainContainer
@@ -89,7 +96,7 @@ class MainWindow(wx.Frame):
         nb = wx.Notebook(panel)
 
         # create the page windows as children of the notebook
-        page1 = ResearchPage(nb)
+        page1 = ArtDirsPage(nb)
         page2 = ResearchPage(nb)
         # add the pages to the notebook with the label to show on the tab
         nb.AddPage(page1, "Article Directories")
@@ -111,22 +118,30 @@ class MainWindow(wx.Frame):
 class ResearchPage(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
-        vbox = wx.BoxSizer(wx.VERTICAL)
-        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        self.vbox = wx.BoxSizer(wx.VERTICAL)
+        self.hbox = wx.BoxSizer(wx.HORIZONTAL)
         
-        textbox = wx.TextCtrl(self, -1 )
-        button = wx.Button(self, -1, 'Go!')
-        resultbox = wx.TextCtrl(self, -1,style =  wx.TE_MULTILINE | wx.TE_DONTWRAP)
-        hbox.Add(textbox, 4)
-        hbox.Add((35,-1))
-        hbox.Add(button , 1 ,  wx.ALIGN_RIGHT | wx.LEFT)
-        hbox.Add((155,-1))
+        self.textbox = wx.TextCtrl(self, -1 )
+        self.button = wx.Button(self, -1, 'Go!')
+        self.resultbox = wx.TextCtrl(self, -1,style =  wx.TE_MULTILINE | wx.TE_DONTWRAP)
+        self.hbox.Add(self.textbox, 3)
+        self.hbox.Add((25,-1))
+        self.hbox.Add(self.button , 1 ,  wx.ALIGN_RIGHT | wx.LEFT)
+        self.hbox.Add((155,-1))
 
         
-        vbox.Add(hbox, 1, wx.EXPAND | wx.ALL, 20)
-        vbox.Add(resultbox, 7,  wx.EXPAND | wx.ALL , 20)
+        self.vbox.Add(self.hbox, 1, wx.EXPAND | wx.ALL, 30)
+        self.vbox.Add(self.resultbox, 7,  wx.EXPAND | wx.ALL , 30)
 
-        self.SetSizer(vbox)
+        self.SetSizer(self.vbox)
+
+
+class ArtDirsPage(ResearchPage):
+    
+    def __init__(self, parent):
+        ResearchPage.__init__(self, parent)
+        #self.textbox.AppendText("Testing Sample")
+        
 
 
 
