@@ -67,8 +67,8 @@ class MainWindow(wx.Frame):
         verticaltoolbar.Realize()
 
 
-        MainContainer.Add(verticaltoolbar, 0, wx.TOP | wx.LEFT , border =20)
-        MainContainer.Add((30, -1))
+        MainContainer.Add(verticaltoolbar, 0, wx.TOP , border = 10)
+        MainContainer.Add((20, -1))
         
         notebook = self.ResearchNoteBook()
         MainContainer.Add(notebook, 7,  wx.EXPAND | wx.ALL, 10)
