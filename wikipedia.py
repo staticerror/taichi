@@ -15,6 +15,4 @@ class Wikipedia(SiteScraper):
 		self.article.append(parseAll(htmlpage, 'p'))
 
 
-a = Wikipedia()
-a.fetchArticle("Pink_floyd")
-print a.article
+

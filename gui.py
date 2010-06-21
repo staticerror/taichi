@@ -1,7 +1,9 @@
-
-import wx
+import wx, wx.html
+from artdirs import *
 from wx import xrc
-
+from wikipedia import Wikipedia
+import threading
+from base.htmlutils import stripHtml
 
 class MainWindow(wx.Frame):
     
@@ -44,12 +46,10 @@ class MainWindow(wx.Frame):
         vbox.Add(verticaltoolbar, 1, wx.EXPAND | wx.RIGHT| wx.TOP | wx.BOTTOM, 20) 
 
 
-        self.Bind(wx.EVT_TOOL, self.OnExit, id=wx.ID_EXIT)
+
         self.SetSizer(vbox)
 
 
-    def OnExit(self, event):
-        self.Close()
         
     def VerticalToolbar(self):
         
@@ -96,8 +96,8 @@ class MainWindow(wx.Frame):
         nb = wx.Notebook(panel)
 
         # create the page windows as children of the notebook
-        page1 = ArtDirsPage(nb)
-        page2 = ResearchPage(nb)
+        page1 = ResearchPage(nb, [ Ezine, Dashboard, ABase])
+        page2 = ResearchPage(nb, [ Wikipedia ])
         # add the pages to the notebook with the label to show on the tab
         nb.AddPage(page1, "Article Directories")
         nb.AddPage(page2, "Wikipedia")
@@ -116,14 +116,19 @@ class MainWindow(wx.Frame):
 
 
 class ResearchPage(wx.Panel):
-    def __init__(self, parent):
+    def __init__(self, parent, models):
         wx.Panel.__init__(self, parent)
         self.vbox = wx.BoxSizer(wx.VERTICAL)
         self.hbox = wx.BoxSizer(wx.HORIZONTAL)
-        
+
         self.textbox = wx.TextCtrl(self, -1 )
-        self.button = wx.Button(self, -1, 'Go!')
-        self.resultbox = wx.TextCtrl(self, -1,style =  wx.TE_MULTILINE | wx.TE_DONTWRAP)
+        self.button = wx.Button(self, 200, 'Go!')
+
+
+
+        self.resultbox = wx.TextCtrl(self, -1,style =  wx.TE_MULTILINE)
+#        self.resultbox = wx.html.HtmlWindow(self, -1)
+       # self.resultbox.SetFonts(normal_face = "helvetica", fixed_face = "helvetica")
         self.hbox.Add(self.textbox, 3)
         self.hbox.Add((25,-1))
         self.hbox.Add(self.button , 1 ,  wx.ALIGN_RIGHT | wx.LEFT)
@@ -134,18 +139,30 @@ class ResearchPage(wx.Panel):
         self.vbox.Add(self.resultbox, 7,  wx.EXPAND | wx.ALL , 30)
 
         self.SetSizer(self.vbox)
-
-
-class ArtDirsPage(ResearchPage):
-    
-    def __init__(self, parent):
-        ResearchPage.__init__(self, parent)
-        #self.textbox.AppendText("Testing Sample")
+        self.models = models
         
 
+        self.Bind(wx.EVT_BUTTON,  self.OnClicked, id = self.button.GetId())
 
 
+    def fetchArticleThread(self):
+        self.resultbox.Disable()
+        for model in self.models:
+            n = model()
+            n.fetchArticle(self.keyword)
+            for result in n.article:
+                self.resultbox.AppendText(stripHtml(str(result)))
+        self.resultbox.AppendText("\n\n\n")
 
+    def OnClicked(self, event):
+        
+        self.keyword = str(self.textbox.GetValue())
+#        self.keyword = str(self.keyword.replace(' ', "+"))
+
+        self.resultbox.Clear()
+        threading.Thread(target = self.fetchArticleThread).start()
+
+        
 if __name__ == '__main__':
     app = wx.App(False)
     MainWindow(None, -1, "Article Domination")

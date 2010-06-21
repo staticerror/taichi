@@ -17,6 +17,6 @@ class SiteScraper:
 			htmlpage = getHtml(searchlink)
 			title = getTitle(htmlpage)
 			body= parse(htmlpage, *body_pattern)
-			self.article.append(searchlink)
 			self.article.append(title)
 			self.article.append(body)
+			self.article.append(searchlink)
