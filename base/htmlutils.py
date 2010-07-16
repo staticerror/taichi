@@ -1,4 +1,5 @@
-import pycurl, re, StringIO
+import re, StringIO
+from urllib2 import urlopen
 from BeautifulSoup import BeautifulSoup
 from tidylib import tidy_document
 from random import randrange
@@ -26,7 +27,13 @@ def getAllLinks(htmlpage, reg = False):
 
 def isHtmlLink(link):
 	"Checks whether a link ends with .html and returns a match obj if true"
-	return re.search(r'\.s?html$', link)
+	return re.search(r'^http(.*?)\.s?html$', link)
+
+def isProperLink(link):
+	return re.search(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', link)
+
+def isGoogleLink(link):
+	return re.search(r'http://www.google.(.*?)', link)
 
 
 def parse(text, *atrs):
@@ -43,6 +50,7 @@ def parseAll(text, *atrs):
 	return body
 
 def getHtml(url):
+
 	" Retrieves the html document, given an url"
 	dev_null = StringIO.StringIO()
 	slurpp = pycurl.Curl()
@@ -52,8 +60,9 @@ def getHtml(url):
 	slurpp.setopt(pycurl.WRITEFUNCTION, dev_null.write)
 	slurpp.perform()
 	document, errors = tidy_document(dev_null.getvalue(), options={'numeric-entities':1}) #use tidy to clean the html
-	#~ document = dev_null.getvalue()
+#~ document = dev_null.getvalue()
 	return document
+#	return urlopen(url).read()  For only on windows without tidy installed.
 
 def post(url, poststring):
 	slurpp = pycurl.Curl()
@@ -135,3 +144,22 @@ def randElement(lst):
 	ind = len(lst)- 1
 	randint = randrange(0, ind)
 	return lst[randint]
+
+#Returns a sequence that consists only of uniques , i.e removes duplicates
+def uniquer(seq, idfun=None):
+    if idfun is None:
+        def idfun(x): return x
+    seen = {}
+    result = []
+    for item in seq:
+        marker = idfun(item)
+        # in old Python versions:
+        # if seen.has_key(marker)
+        # but in new ones:
+        if marker in seen: continue
+        seen[marker] = 1
+        result.append(item)
+    return result
+
+#ls = ["a", "a", "b"]
+#print uniquer(ls)
